@@ -35,22 +35,31 @@ public class User {
     private List<Post> posts;
 
 
-    public static User of(String name, String password, String salt, String email, Integer auth) {
-        User user = new User();
-        user.name=name;
-        user.password=password;
-        user.salt=salt;
-        user.email=email;
-        user.authority=auth;
-        return user;
-    }
+//    public static User of(String name, String password, String salt, String email, Integer auth) {
+//        User user = new User();
+//        user.name=name;
+//        user.password=password;
+//        user.salt=salt;
+//        user.email=email;
+//        user.authority=auth;
+//        return user;
+//    }
 
 
-    @Builder
-    private User(String name, String password, String salt, Integer auth) {
+    @Builder(builderMethodName="createUserBuilder")
+    private User(String name, String password, String salt, Integer auth, String email) {
         this.name = name;
         this.password = password;
         this.salt = salt;
         this.authority=auth;
+        this.email=email;
+    }
+
+    public void updateName(String name){
+        this.name=name;
+    }
+
+    public void updatePassword(String pwd){
+        this.password=pwd;
     }
 }

@@ -30,6 +30,13 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	//mysql
+	implementation 'mysql:mysql-connector-java:8.0.33'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	//이메일 정규식 검사
+	implementation 'commons-validator:commons-validator:1.7'
 }
 
 tasks.named('test') {

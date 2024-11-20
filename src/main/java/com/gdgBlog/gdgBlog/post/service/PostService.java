@@ -3,6 +3,7 @@ package com.gdgBlog.gdgBlog.post.service;
 import com.gdgBlog.gdgBlog.board.Board;
 import com.gdgBlog.gdgBlog.board.repostirory.BoardRepository;
 import com.gdgBlog.gdgBlog.post.Post;
+import com.gdgBlog.gdgBlog.post.dto.CreatePostRequest;
 import com.gdgBlog.gdgBlog.post.dto.PostDto;
 import com.gdgBlog.gdgBlog.post.repository.PostRepository;
 import com.gdgBlog.gdgBlog.user.User;
@@ -20,25 +21,24 @@ public class PostService {
 
 
     @Transactional
-    public PostDto createPost(PostDto postDto, Long userId, Long boardId) {
+    public PostDto createPost(CreatePostRequest request) {
+        User user = userRepository.findById(request.getUserId()).orElseThrow();
+        Board board = boardRepository.findById(request.getBoardId()).orElseThrow();
 
-        User user = userRepository.findById(userId).orElseThrow();
-        Board board = boardRepository.findById(boardId).orElseThrow();
-
-        Post post = Post.of(postDto, user, board);
+        Post post = request.toPostDto().toEntity(user,board);//(postDto, user, board);
         post = postRepository.save(post);
 
-        return PostDto.from(post);
+        return post.toPostDto();
     }
     @Transactional
-    public PostDto updatePost(Long postId, PostDto dto, Long userId) {
+    public PostDto updatePost(Long postId, CreatePostRequest request) {
         Post post = postRepository.findById(postId).orElseThrow();
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(request.getUserId()).orElseThrow();
 
         if (post.getUser()==user){
-            post.updatePost(dto);
-            postRepository.save(post);
-            return PostDto.from(post);
+            post.updatePost(request.toPostDto());
+            //postRepository.save(post);
+            return post.toPostDto();
         }else return null;
     }
     public void deletePost(Long postId) {

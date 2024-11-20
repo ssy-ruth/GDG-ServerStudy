@@ -9,15 +9,21 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CreatePostRequest {
 
-    private Long id;
-
     private Long userId;
 
     private Long boardId;
 
     private String title;
 
-    private LocalDate date;
+    //private LocalDate createdAt;
 
-    private String Content;
+    private String content;
+
+    public PostDto toPostDto() {
+        return PostDto.builder()
+                //.createdAt(this.createdAt)
+                .title(this.title)
+                .content(this.content)
+                .build();
+    }
 }

@@ -17,23 +17,16 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<CreatePostResponse> createPost(@RequestBody CreatePostRequest request) {
-        Long userId = request.getUserId();
-        Long boardId = request.getBoardId();
+        PostDto createdPostDto = postService.createPost(request);
 
-        PostDto postDto = PostDto.convertToPostDto(request);
-        PostDto createdPostDto = postService.createPost(postDto, userId, boardId);
-
-        CreatePostResponse response = CreatePostResponse.fromPost(createdPostDto);
+        CreatePostResponse response = CreatePostResponse.toDto(createdPostDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/{postId}")
     public ResponseEntity<CreatePostResponse> updatePlan(@PathVariable Long postId, @RequestBody CreatePostRequest request) {
-        PostDto postDto = PostDto.convertToPostDto(request);
-        Long userId = request.getUserId();
-
-        PostDto updatedPostDto = postService.updatePost(postId, postDto, userId);
-        CreatePostResponse response = CreatePostResponse.fromPost(updatedPostDto);
+        PostDto updatedPostDto = postService.updatePost(postId, request);
+        CreatePostResponse response = CreatePostResponse.toDto(updatedPostDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

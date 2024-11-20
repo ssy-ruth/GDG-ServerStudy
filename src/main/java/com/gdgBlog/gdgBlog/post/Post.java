@@ -30,33 +30,42 @@ public class Post {
     private String title;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDate createdAt;
 
     private String content;
 
     //dto할때
-    public static Post of(PostDto dto, User user, Board board) {
-        Post post = new Post();
-        post.title=dto.getTitle();
-        post.date=dto.getDate();
-        post.content=dto.getContent();
-        post.user=user;
-        post.board=board;
-        return post;
-    }
-
-
-//    @Builder
-//    private Post(User user, Board board, String title, String content){
-//        this.user=user;
-//        this.board=board;
-//        this.title=title;
-//        this.content=content;
+//    public static Post of(PostDto dto, User user, Board board) {
+//        Post post = new Post();
+//        post.title=dto.getTitle();
+//        post.date=dto.getDate();
+//        post.content=dto.getContent();
+//        post.user=user;
+//        post.board=board;
+//        return post;
 //    }
+
+
+    @Builder
+    private Post(User user, Board board, String title, String content){
+        this.user=user;
+        this.board=board;
+        this.title=title;
+        this.content=content;
+        this.createdAt=LocalDate.now();
+    }
 
     public void updatePost(PostDto dto){
         this.title=dto.getTitle();
         this.content=dto.getContent();
-        this.date=dto.getDate();
+        this.createdAt=LocalDate.now();
+    }
+
+    public PostDto toPostDto(){
+        return PostDto.builder()
+                .title(this.title)
+                .content(this.content)
+                .createdAt(this.createdAt)
+                .build();
     }
 }
