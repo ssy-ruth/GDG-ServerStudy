@@ -1,15 +1,18 @@
 package com.gdgBlog.gdgBlog.domain.user.controller;
 
+import com.gdgBlog.gdgBlog.config.jwt.JwtFilter;
 import com.gdgBlog.gdgBlog.domain.user.dto.CreateUserRequest;
 import com.gdgBlog.gdgBlog.domain.user.dto.UpdateUserRequest;
-import com.gdgBlog.gdgBlog.domain.user.dto.UserResponse;
+import com.gdgBlog.gdgBlog.domain.user.dto.UserWithTokenResponse;
 import com.gdgBlog.gdgBlog.domain.user.service.UserService;
 import com.gdgBlog.gdgBlog.domain.user.dto.LoginUserRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @Slf4j
 @RestController
@@ -19,21 +22,24 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserResponse> signup(@RequestBody CreateUserRequest request){
-        UserResponse response = userService.signup(request);
+    public ResponseEntity<UserWithTokenResponse> signup(@RequestBody CreateUserRequest request){
+        UserWithTokenResponse response = userService.signup(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody LoginUserRequest request) {
-        UserResponse response = userService.login(request);
+    public ResponseEntity<UserWithTokenResponse> login(@RequestBody LoginUserRequest request) {
+        UserWithTokenResponse response = userService.login(request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + response.getAccessToken());
+
+        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<UserResponse> update(@RequestBody UpdateUserRequest request) {
-        UserResponse response = userService.update(request);
+    public ResponseEntity<UserWithTokenResponse> update(@RequestBody UpdateUserRequest request) {
+        UserWithTokenResponse response = userService.update(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

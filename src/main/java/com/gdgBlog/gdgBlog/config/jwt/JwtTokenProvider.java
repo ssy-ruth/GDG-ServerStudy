@@ -1,6 +1,7 @@
 package com.gdgBlog.gdgBlog.config.jwt;
 
-import com.gdgBlog.gdgBlog.domain.user.dto.UserResponse;
+import com.gdgBlog.gdgBlog.domain.user.dto.UserDetailsResponse;
+import com.gdgBlog.gdgBlog.domain.user.dto.UserWithTokenResponse;
 import com.gdgBlog.gdgBlog.domain.user.service.UserService;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
@@ -13,7 +14,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class JwtTokenProvider implements InitializingBean{
     }
 
     public String createAccessToken(Authentication authentication) {
-        UserResponse user = (UserResponse) authentication.getPrincipal();
+        UserWithTokenResponse user = (UserWithTokenResponse) authentication.getPrincipal();
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
 
@@ -57,7 +58,7 @@ public class JwtTokenProvider implements InitializingBean{
 
     public String createRefreshToken(Authentication authentication) {
 
-        UserResponse user = (UserResponse) authentication.getPrincipal();
+        UserWithTokenResponse user = (UserWithTokenResponse) authentication.getPrincipal();
         long refreshTokenValidityInMilliSeconds = 60480000;
         long now = (new Date()).getTime();
         Date validity = new Date(now + refreshTokenValidityInMilliSeconds);
@@ -79,9 +80,9 @@ public class JwtTokenProvider implements InitializingBean{
                 .getPayload();
 
         String username = claims.getSubject();
-        UserResponse userResponse = userService.loadUserByUsername(username);
+        UserDetailsResponse userDetailsResponse = userService.loadUserByUsername(username);
 
-        return new UsernamePasswordAuthenticationToken(userResponse, token, new ArrayList<>());
+        return new UsernamePasswordAuthenticationToken(userDetailsResponse, token, new ArrayList<>());
     }
 
     public boolean validateToken(String token) {
