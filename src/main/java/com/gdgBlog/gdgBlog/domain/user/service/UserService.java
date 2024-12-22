@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -70,6 +71,12 @@ public class UserService {
         return new UserResponse(user.getId(), user.getName());
     }
 
+    @Transactional
+    public UserResponse loadUserByUsername(String email) throws UserNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email + " -> DB에 존재하지 않습니다."));
+        return new UserResponse(user.getId(), user.getName());
+    }
     public UserResponse update(UpdateUserRequest request) {
         //토큰으로 유저검사
         String pwd = request.getPassword();
